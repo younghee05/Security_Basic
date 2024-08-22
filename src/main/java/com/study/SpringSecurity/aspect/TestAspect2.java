@@ -1,31 +1,45 @@
 package com.study.SpringSecurity.aspect;
 
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.reflect.CodeSignature;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-
-// aop 기본 틀 (이렇게 써야함) 클래스명만 달라지는 꼴
-// aop 는 filter랑 비슷 하다고 보면 됨
 
 @Aspect
 @Component
-public class TestAspect  {
+@Order(value = 1)
+public class TestAspect2 {
 
-    @Pointcut("execution(String com.study.SpringSecurity.service.TestService.aop*(..))")
+    @Pointcut("@annotation(com.study.SpringSecurity.aspect.annotation.Test2Aop)")
     private void pointCut() {}
-
 
     @Around("pointCut()")
     public Object around(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+        // getArgs 는 메소드를 의미 / Object [] 을 리턴함
+//        for (Object obj : proceedingJoinPoint.getArgs()) {
+//            System.out.println(obj);
+//        }
+        // Signature 객체
+//        Signature signature = proceedingJoinPoint.getSignature();
+        // signature 객체에서 다운캐스팅해줘야 한다
+        CodeSignature signature = (CodeSignature) proceedingJoinPoint.getSignature();
+        System.out.println(signature.getName());
 
-        // around의 전처리가 실행
-        System.out.println("전처리");
-        Object result = proceedingJoinPoint.proceed(); // 핵심기능 호출
-        System.out.println("후처리"); // 여기가 실행 된 후
+        Object[] args = proceedingJoinPoint.getArgs();
+        String[] paramNames = signature.getParameterNames();
 
-        // return에 result 값이 호출 됨
-        return result; // aopTest라는 메소드를 호출해낸다
+        for (int i = 0; i < args.length; i++) {
+            System.out.println(paramNames[i] + ": " + args[i]);
+        }
+
+        System.out.println("전처리2");
+        Object result = proceedingJoinPoint.proceed();
+        System.out.println("후처리2");
+
+        return result;
     }
 }

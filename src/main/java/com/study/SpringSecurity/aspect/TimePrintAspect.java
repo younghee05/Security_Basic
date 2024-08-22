@@ -1,3 +1,4 @@
+
 package com.study.SpringSecurity.aspect;
 
 
@@ -8,20 +9,24 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.CodeSignature;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StopWatch;
 
 @Slf4j
 @Aspect
 @Component
-public class ParamsPrintAspect {
+public class TimePrintAspect {
 
-    @Pointcut("@annotation(com.study.SpringSecurity.aspect.annotation.ParamsAop)")
+    @Pointcut("@annotation(com.study.SpringSecurity.aspect.annotation.TimeAop)")
     private void pointCut() {}
 
     @Around("pointCut()")
     public Object around(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         CodeSignature signature = (CodeSignature) proceedingJoinPoint.getSignature();
-        String[] paramNames = signature.getParameterNames();
-        Object[] args = proceedingJoinPoint.getArgs();
+        StopWatch stopWatch = new StopWatch();
+
+        stopWatch.start();
+        Object result = proceedingJoinPoint.proceed();
+        stopWatch.stop();
 
         String infoPrint = "ClassName(" + signature.getDeclaringType().getSimpleName() + ") MethodName(" + signature.getName() + ")";
         String linePrint = "";
@@ -31,11 +36,9 @@ public class ParamsPrintAspect {
 
         log.info("{}", linePrint);
         log.info("{}", infoPrint);
-        for(int i = 0; i < paramNames.length; i++) {
-            log.info("{} >>>> {}", paramNames[i], args[i]);
-        }
+        log.info("TotalTime: {}초", stopWatch.getTotalTimeSeconds());
         log.info("{}", linePrint);
 
-        return proceedingJoinPoint.proceed();
+        return result;
     }
 }

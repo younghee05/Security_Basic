@@ -1,0 +1,6 @@
+2024-08-22 15:19:29 jdbc[14]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT * FROM ROLE USER ROLE[*]"; SQL statement:
+SELECT * FROM ROLE USER ROLE [42000-200]
+2024-08-22 15:19:37 jdbc[14]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "USER[*]"; expected "UPDATE, USE"; SQL statement:
+USER [42001-200]
