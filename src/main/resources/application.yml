@@ -7,10 +7,13 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: true
 
   h2:
     console:
       enabled: true
       path: /h2-console
+
+jwt:
+  secret: ee0e3fd4c67654437c1791aca094305965b6c2aac18017d844f8219219c1bf4d400346c5efe53f914c2080e161003b9b7bb72915e9d5cb39ce73d88e4c413ed86b460fc2c56d6f6652eda9a20ad989320592957a02512b1343c73d6f2fa435a568a5da08a6028fa58d0060a0dd15ccb73e08a3da6aeab11f45249690a1e60a04

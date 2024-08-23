@@ -1,5 +1,6 @@
 package com.study.SpringSecurity.domain.entity;
 
+import com.study.SpringSecurity.security.principal.PrincipalUser;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,7 +31,7 @@ public class User {
 
     // 다 : 다(M:M) 관계
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(
+    @JoinTable( // ManyToMany를 쓸 때 joinTable이 필요
             name = "user_roles",  // 테이블
             joinColumns = @JoinColumn(name = "user_id"), // join 키값 user_id
             inverseJoinColumns = @JoinColumn(name = "role_id")  // join할 때 쓰이는 키값
@@ -38,5 +39,18 @@ public class User {
     private Set<Role> roles; // 중복이 나올 관계 때문에 방지 차원에서 Set 이 쓰임
                             // (ex.1:1 = 1:1) => user_id = 1 일때 role_id = 1을 가지고 role_id = 1 일때 user_id = 1을 갖는
                            //  관계가 같음(중복이 됨)
+
+//    @OneToMany(mappedBy = "user") // "user" UserRole에 있는 데이터 값을 똑같이 써야함
+//    private Set<UserRole> userRoles = new HashSet<>(); // 초기화
+
+    public PrincipalUser toPrincipalUser() {
+        return PrincipalUser.builder()
+                .userId(id)
+                .username(username)
+                .password(password)
+                .roles(roles)
+                .build();
+    }
+
 
 }

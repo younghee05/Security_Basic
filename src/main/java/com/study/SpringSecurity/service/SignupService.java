@@ -6,33 +6,40 @@ import com.study.SpringSecurity.dto.request.ReqSignupDto;
 import com.study.SpringSecurity.repository.RoleRepository;
 import com.study.SpringSecurity.repository.UserRepository;
 import com.study.SpringSecurity.domain.entity.User;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 import java.util.Set;
 
 @Service
+@RequiredArgsConstructor // Autowired 대신 쓸 수 있음
 public class SignupService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private RoleRepository roleRepository;
+    private final RoleRepository roleRepository;
 
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @TimeAop
+    @Transactional(rollbackFor = Exception.class) // 오류가 났을 때 rollback 이 실행됨
     public User signup(ReqSignupDto dto) {
         User user = dto.toEntity(passwordEncoder);
         Role role = roleRepository.findByName("ROLE_USER").orElseGet(
                 () -> roleRepository.save(Role.builder().name("ROLE_USER").build())
         );
         user.setRoles(Set.of(role));
-        return userRepository.save(user);
+        user = userRepository.save(user);
+
+//        UserRole userRole = UserRole.builder()
+//                .user(user)
+//                .role(role)
+//                .build();
+//        userRole = userRoleRepository.save(userRole);
+
+        return user;
     }
 
     public boolean isDuplicatedUsername(String username) {

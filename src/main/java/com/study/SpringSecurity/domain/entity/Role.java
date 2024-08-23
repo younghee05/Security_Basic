@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -22,6 +23,9 @@ public class Role {
     private Long id;
     @Column(unique = true, nullable = false)
     private String name; // ROLE_USER, ROLE_ADMIN, ROLE_MANAGER 이런식으로 잡힌다
+
+//    @OneToMany(mappedBy = "role")
+//    private Set<UserRole> userRoles = new HashSet<>();
 
 //    @ManyToMany(mappedBy = "roles")
 //    private List<User> users;

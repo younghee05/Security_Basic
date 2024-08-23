@@ -1,5 +1,7 @@
 package com.study.SpringSecurity.config;
 
+import com.study.SpringSecurity.security.filter.JwtAccessTokenFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -7,10 +9,14 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity // 우리가 만든 SecurityConfig를 적용시키겠다.
 @Configuration // Bean 등록 가능 / annotation 사용 불가
 public class SecurityConfig extends WebSecurityConfigurerAdapter { // 추상클래스를 상속 시킴
+
+    @Autowired
+    private JwtAccessTokenFilter jwtAccessTokenFilter;
 
     // annotation 사용 불가하므로 bean을 써서 BCryptPasswordEncoder를 생성한다
     @Bean
@@ -34,7 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter { // 추상클�
 
         http.cors(); // 다른 서버에서 이런 메소드일때 / url 일때 연결 요청을 보내겠다 라는 뜻 / 요청만 보냄 응답 x
         http.authorizeRequests()
-                .antMatchers("/auth/**", "/h2-console/**", "/test/**") // 주소를 골라줄 수 있다
+                .antMatchers("/auth/**", "/h2-console/**") // 주소를 골라줄 수 있다
                 .permitAll()
                 .anyRequest() // 키값 인증 요청
                 .authenticated() // 인증 허용
@@ -42,6 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter { // 추상클�
                 .headers()
                 .frameOptions()
                 .disable();
+        http.addFilterBefore(jwtAccessTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
     }
 }
